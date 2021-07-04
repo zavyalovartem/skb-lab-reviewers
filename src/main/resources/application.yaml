@@ -11,3 +11,4 @@ spring:
 app:
   host: www.gitlab.com //для вида
   token: aaaaaa
+  project_id: 1234
