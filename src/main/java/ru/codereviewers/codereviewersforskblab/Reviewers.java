@@ -20,7 +20,6 @@ public class Reviewers {
     }
 }
 enum Status {
-    OVERBURDENED,
     AVAILABLE,
     NOT_AVAILABLE
 }

@@ -43,25 +43,26 @@ public class AppointmentReviewersService {
 
     }
 
-    private void countLoad(Integer projectId) throws GitLabApiException {
+    private int countLoad(Integer projectId, String username) throws GitLabApiException {
+        int load = 0;
         var mrs = gitLabApi.getMergeRequestApi().getMergeRequests(projectId, Constants.MergeRequestState.OPENED);
         for (MergeRequest mr:
              mrs) {
             var reviewers = mr.getReviewers();
             for (Reviewer reviewer:
                  reviewers) {
-                var user = repo.findById(reviewer.getUsername()).get();
-                user.setOpenReviews(user.getOpenReviews()+1);
-                if(user.getOpenReviews() > 5){
-                    user.setStatus(Status.OVERBURDENED);
+                if(reviewer.getUsername()==username){
+                    load++;
                 }
-                repo.save(user);
             }
         }
-
+        return load;
     }
 
-    private Boolean isAvailable(User user){
-        return repo.findById(user.getUsername()).get().getStatus()==Status.AVAILABLE;
+    private Boolean isAvailable(Integer projectId, String username) throws GitLabApiException {
+        if(countLoad(projectId, username)>5){
+            return false;
+        }
+        return repo.findById(username).get().getStatus()==Status.AVAILABLE;
     }
 }
