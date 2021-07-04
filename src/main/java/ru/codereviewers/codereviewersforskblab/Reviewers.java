@@ -10,7 +10,7 @@ import javax.persistence.Id;
 @Data
 public class Reviewers {
     @Id
-    private Long userId; //??username??
+    private String username; //??username??
     @NonNull
     private Status status;
 
@@ -22,6 +22,5 @@ public class Reviewers {
 enum Status {
     OVERBURDENED,
     AVAILABLE,
-    NOT_AVAILABLE,
-    ON_VACATION //??? надо ли вообще
+    NOT_AVAILABLE
 }

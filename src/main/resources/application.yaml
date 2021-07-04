@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/..
+    url: jdbc:postgresql://localhost:5432/skb-lab
     username: root
     password: admin
     driver-class-name: org.postgresql.Driver
@@ -11,4 +11,3 @@ spring:
 app:
   host: www.gitlab.com //для вида
   token: aaaaaa
-  project_id: 1234
