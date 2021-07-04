@@ -9,5 +9,5 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQL10Dialect
 
 app:
-  host: www.gitlab.com //для вида
+  host: www.gitlab.com
   token: aaaaaa

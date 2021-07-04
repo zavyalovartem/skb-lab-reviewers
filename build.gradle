@@ -26,7 +26,9 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation  group: 'org.gitlab4j', name: 'gitlab4j-api', version: '4.16.0'
+	
 	implementation group: 'org.postgresql', name: 'postgresql', version: '42.1.4'
+	annotationProcessor group: 'org.springframework.boot', name: 'spring-boot-configuration-processor'
 }
 
 test {
