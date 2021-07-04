@@ -14,9 +14,9 @@ public class Reviewers {
     @NonNull
     private Status status;
 
-
+    private Integer openReviews;
     public Reviewers() {
-
+        openReviews = 0;
     }
 }
 enum Status {
