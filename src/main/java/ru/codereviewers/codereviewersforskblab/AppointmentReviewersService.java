@@ -6,13 +6,15 @@ import org.gitlab4j.api.GitLabApiException;
 import org.gitlab4j.api.models.MergeRequest;
 import org.gitlab4j.api.models.Project;
 import org.gitlab4j.api.models.Reviewer;
-import org.gitlab4j.api.models.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 public class AppointmentReviewersService {
@@ -24,34 +26,55 @@ public class AppointmentReviewersService {
 
     public AppointmentReviewersService(GitLabApi gitLabApi, ReviewersRepository repo) throws GitLabApiException {
         this.gitLabApi = gitLabApi;
-        this.projects =  gitLabApi.getProjectApi().getProjects();
+        this.projects = gitLabApi.getProjectApi().getProjects();
         this.repo = repo;
     }
 
-    public void handleMR() throws GitLabApiException {
+    public void handleMR() throws GitLabApiException, InterruptedException {
 
-        for (Project project:
-             projects) {
-            var id = project.getId();
-            try {
-                var mr = gitLabApi.getMergeRequestApi().getMergeRequests(id, Constants.MergeRequestState.OPENED).stream().filter(t -> t.getCreatedAt().after(time));
+        while (true) {
+            for (Project project :
+                    projects) {
+                var id = project.getId();
+
+                var mrs = gitLabApi.getMergeRequestApi().getMergeRequests(id, Constants.MergeRequestState.OPENED).stream().filter(t -> t.getCreatedAt().after(time)).collect(Collectors.toList());
+
                 time = new Date();
-            } catch (GitLabApiException e) {
-                log.error(e.getMessage());
+                for (MergeRequest mr :
+                        mrs) {
+                    var task = mr.getTitle().substring(1, 10); //нужно нормальный парсер сделать
+                    var closedMrs = gitLabApi.getMergeRequestApi().getMergeRequests(id, Constants.MergeRequestState.CLOSED).stream().filter(t -> t.getTitle().substring(1, 10).equals(task)).collect(Collectors.toList());
+                    if (closedMrs.size() > 0) {
+                        for (MergeRequest closedMr :
+                                closedMrs) {
+                            var list = new ArrayList<Reviewer>(1);
+                            var reviewers = closedMr.getReviewers();
+                            for (Reviewer reviewer :
+                                    reviewers) {
+                                if (isAvailable(id, reviewer.getUsername())) {
+                                    list.add(reviewer);
+                                }
+                            }
+                            mr.setReviewers(list); //херня написана тут. 1 ревьюер нужен?
+                        }
+                    } else {
+                        //логика на подсчет %
+                    }
+                }
             }
+            TimeUnit.MINUTES.sleep(30);
         }
-
     }
 
     private int countLoad(Integer projectId, String username) throws GitLabApiException {
         int load = 0;
         var mrs = gitLabApi.getMergeRequestApi().getMergeRequests(projectId, Constants.MergeRequestState.OPENED);
-        for (MergeRequest mr:
-             mrs) {
+        for (MergeRequest mr :
+                mrs) {
             var reviewers = mr.getReviewers();
-            for (Reviewer reviewer:
-                 reviewers) {
-                if(reviewer.getUsername().equals(username)){
+            for (Reviewer reviewer :
+                    reviewers) {
+                if (reviewer.getUsername().equals(username)) {
                     load++;
                 }
             }
@@ -60,9 +83,9 @@ public class AppointmentReviewersService {
     }
 
     private Boolean isAvailable(Integer projectId, String username) throws GitLabApiException {
-        if(countLoad(projectId, username)>5){
+        if (countLoad(projectId, username) > 5) {
             return false;
         }
-        return repo.findById(username).get().getStatus()==Status.AVAILABLE;
+        return repo.findById(username).get().getStatus() == Status.AVAILABLE;
     }
 }
