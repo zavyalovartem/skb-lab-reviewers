@@ -51,7 +51,7 @@ public class AppointmentReviewersService {
             var reviewers = mr.getReviewers();
             for (Reviewer reviewer:
                  reviewers) {
-                if(reviewer.getUsername()==username){
+                if(reviewer.getUsername().equals(username)){
                     load++;
                 }
             }
