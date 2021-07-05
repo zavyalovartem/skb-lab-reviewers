@@ -10,7 +10,7 @@ import javax.persistence.Id;
 @Data
 public class Reviewers {
     @Id
-    private String username; //??username??
+    private String username;
     @NonNull
     private Status status;
 

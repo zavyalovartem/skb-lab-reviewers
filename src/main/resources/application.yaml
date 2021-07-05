@@ -1,3 +1,8 @@
+app:
+  host: https://gitlab.com/
+  token: sLMKNvyzMfhke9yyBGEk
+
+
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/skb-lab
@@ -8,6 +13,3 @@ spring:
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQL10Dialect
 
-app:
-  host: www.gitlab.com
-  token: aaaaaa
