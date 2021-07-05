@@ -47,15 +47,12 @@ public class AppointmentReviewersService {
                     if (closedMrs.size() > 0) {
                         for (MergeRequest closedMr :
                                 closedMrs) {
-                            var list = new ArrayList<Reviewer>(1);
-                            var reviewers = closedMr.getReviewers();
-                            for (Reviewer reviewer :
-                                    reviewers) {
-                                if (isAvailable(id, reviewer.getUsername())) {
-                                    list.add(reviewer);
-                                }
+
+                            var reviewer = closedMr.getReviewers().get(0);
+                            if (isAvailable(id, reviewer.getUsername())) {
+                                mr.setReviewers(List.of(reviewer));
                             }
-                            mr.setReviewers(list); //херня написана тут. 1 ревьюер нужен?
+
                         }
                     } else {
                         //логика на подсчет %
