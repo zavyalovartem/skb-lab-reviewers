@@ -1,6 +1,7 @@
 app:
-  host: https://gitlab.com/
-  token: sLMKNvyzMfhke9yyBGEk
+  host: https://gitlab.com
+  token: S5KXrL3nxkAoeDbVr2XB
+  project_id: 27919912
 
 
 spring:

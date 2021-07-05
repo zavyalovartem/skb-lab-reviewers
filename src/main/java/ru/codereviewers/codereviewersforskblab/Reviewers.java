@@ -13,11 +13,12 @@ public class Reviewers {
     private String username;
     @NonNull
     private Status status;
-
+    private Integer load;
     public Reviewers() {
     }
 }
 enum Status {
     AVAILABLE,
+    OVERBURDENED,
     NOT_AVAILABLE
 }
